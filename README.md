@@ -1,7 +1,7 @@
-# cppgl
-a C++ wrapper for modern OpenGL
+# cppgl 
+:loop:a C++ wrapper for modern OpenGL
 
-[Example code](https://github.com/iichenbf/cppgl/blob/master/cppgl/cppgl.cpp):
+:loop:[Example code](https://github.com/iichenbf/cppgl/blob/master/cppgl/cppgl.cpp):
 
 ```c++
 #include "cppgl.h"
@@ -136,9 +136,9 @@ void cppgl_test()
 }
 
 NS_CPPGL_END
-```c++
+```
 
-TODO:
+:loop:TODO:
 - use shared_ptr<> instead of GC
 - add EBO
 - more tests
