@@ -3,6 +3,8 @@
 
 #####:loop:[Example code](https://github.com/iichenbf/cppgl/blob/master/cppgl/cppgl.cpp):
 
+![](./cppgl_test_result.png)
+
 ```c++
 #include "cppgl.h"
 
