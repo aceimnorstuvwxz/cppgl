@@ -1,55 +1,79 @@
-//
-//  Program.cpp
-//  lua2d_glfw
-//
-//  Created by chenbingfeng on 15/5/3.
-//  Copyright (c) 2015年 chenbingfeng. All rights reserved.
-//
+/*
+ Copyright (c) 2015 chenbingfeng (iichenbf#gmail.com)
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ */
 
 #include "Program.h"
 #define COUNT_MAX 16
 
 NS_CPPGL_BEGIN
+
+SPProgram Program::create()
+{
+    return SPProgram(new Program());
+}
+
+SPProgram Program::create(const SPShader& vertex)
+{
+    return SPProgram(new Program(vertex));
+}
+
+SPProgram Program::create(const SPShader &vertex, const SPShader &fragment)
+{
+    return SPProgram(new Program(vertex, fragment));
+}
+
+SPProgram Program::create(const SPShader &vertex, const SPShader &fragment, const SPShader &geometry)
+{
+    return SPProgram(new Program(vertex, fragment, geometry));
+}
+
 Program::Program()
 {
-    _obj = _gc.create( glCreateProgram(), glDeleteProgram );
+    _obj = glCreateProgram();
 }
 
-Program::Program( const Program& other )
+Program::Program( const SPShader& vertex ):Program()
 {
-    _gc.copy( other._obj, _obj );
-}
-
-Program::Program( const Shader& vertex )
-{
-    _obj = _gc.create( glCreateProgram(), glDeleteProgram );
-    attach( vertex );
+    attach(vertex);
     link();
-//    glUseProgram( _obj ); // call program.use() to use, so multiple shader-program is supported.
 }
 
-Program::Program( const Shader& vertex, const Shader& fragment )
+Program::Program( const SPShader& vertex, const SPShader& fragment ):Program()
 {
-    _obj = _gc.create( glCreateProgram(), glDeleteProgram );
-    attach( vertex );
-    attach( fragment );
+    attach(vertex);
+    attach(fragment);
     link();
-//    glUseProgram( _obj );
 }
 
-Program::Program( const Shader& vertex, const Shader& fragment, const Shader& geometry )
+Program::Program( const SPShader& vertex, const SPShader& fragment, const SPShader& geometry ):Program()
 {
-    _obj = _gc.create( glCreateProgram(), glDeleteProgram );
-    attach( vertex );
-    attach( fragment );
-    attach( geometry );
+    attach(vertex);
+    attach(fragment);
+    attach(geometry);
     link();
-//    glUseProgram( obj );
 }
 
 Program::~Program()
 {
-    _gc.destroy( _obj );
+    glDeleteProgram(_obj);
 }
 
 Program::operator GLuint() const
@@ -57,15 +81,9 @@ Program::operator GLuint() const
     return _obj;
 }
 
-const Program& Program::operator=( const Program& other )
+void Program::attach( const SPShader& shader )
 {
-    _gc.copy( other._obj, _obj, true );
-    return *this;
-}
-
-void Program::attach( const Shader& shader )
-{
-    glAttachShader( _obj, shader );
+    glAttachShader( _obj, *shader );
 }
 
 void Program::transformFeedbackVaryings( const char** varyings, unsigned int count )
@@ -80,7 +98,19 @@ void Program::link()
     glLinkProgram( _obj );
     glGetProgramiv( _obj, GL_LINK_STATUS, &res );
 
+    if (res != GL_TRUE) {
+        LOG("link failed, ", getInfoLog());
+        _linked = false;
+    } else {
+        _linked = true;
+    }
+
     assert(res == GL_TRUE);
+}
+
+bool Program::isLinked() const
+{
+    return _linked;
 }
 
 std::string Program::getInfoLog()
@@ -184,7 +214,5 @@ void Program::setUniform( const Uniform& uniform, const glm::mat4& value )
 {
     glUniformMatrix4fv( uniform, 1, GL_FALSE, glm::value_ptr(value) );
 }
-
-GC Program::_gc;
 
 NS_CPPGL_END

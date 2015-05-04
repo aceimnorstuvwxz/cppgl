@@ -1,28 +1,46 @@
-//
-//  VertexBuffer.cpp
-//  lua2d_glfw
-//
-//  Created by chenbingfeng on 15/5/3.
-//  Copyright (c) 2015年 chenbingfeng. All rights reserved.
-//
+/*
+ Copyright (c) 2015 chenbingfeng (iichenbf#gmail.com)
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ */
 
 #include "VertexBuffer.h"
 
 NS_CPPGL_BEGIN
 
+SPVertexBuffer VertexBuffer::create()
+{
+    return SPVertexBuffer(new VertexBuffer());
+}
+
+SPVertexBuffer VertexBuffer::create(const void *data, size_t length, BufferUsage::buffer_usage_t usage)
+{
+    return SPVertexBuffer(new VertexBuffer(data, length, usage));
+}
+
 VertexBuffer::VertexBuffer()
 {
-    _gc.create( _obj, glGenBuffers, glDeleteBuffers );
+    glGenBuffers(1, &_obj);
 }
 
-VertexBuffer::VertexBuffer( const VertexBuffer& other )
+VertexBuffer::VertexBuffer( const void* data, size_t length, BufferUsage::buffer_usage_t usage ):VertexBuffer()
 {
-    _gc.copy( other._obj, _obj );
-}
-
-VertexBuffer::VertexBuffer( const void* data, size_t length, BufferUsage::buffer_usage_t usage )
-{
-    _gc.create( _obj, glGenBuffers, glDeleteBuffers );
     this->data(data, length, usage );
 }
 
@@ -42,18 +60,12 @@ VertexBuffer::VertexBuffer( const Mesh& mesh, BufferUsage::buffer_usage_t usage,
 
 VertexBuffer::~VertexBuffer()
 {
-    _gc.destroy( _obj );
+    glDeleteBuffers(1, &_obj);
 }
 
 VertexBuffer::operator GLuint() const
 {
     return _obj;
-}
-
-const VertexBuffer& VertexBuffer::operator=( const VertexBuffer& other )
-{
-    _gc.copy( other._obj, _obj, true );
-    return *this;
 }
 
 void VertexBuffer::data( const void* data, size_t length, BufferUsage::buffer_usage_t usage )
@@ -73,7 +85,5 @@ void VertexBuffer::getSubData( void* data, size_t offset, size_t length )
     glBindBuffer( GL_ARRAY_BUFFER, _obj );
     glGetBufferSubData( GL_ARRAY_BUFFER, offset, length, data );
 }
-
-GC VertexBuffer::_gc;
 
 NS_CPPGL_END

@@ -1,13 +1,29 @@
-//
-//  Context.h
-//  OpenGL context
-//
-//  Created by chenbingfeng on 15/5/2.
-//  Copyright (c) 2015年 chenbingfeng. All rights reserved.
-//
+/*
+ Copyright (c) 2015 chenbingfeng (iichenbf#gmail.com)
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ */
 
 #ifndef __lua2d_glfw__Context__
 #define __lua2d_glfw__Context__
+
+#include <memory>
 
 #include "utils.h"
 #include "Program.h"
@@ -18,6 +34,7 @@
 NS_CPPGL_BEGIN
 
 // plain enum will keep things simple
+// instead of enum class
 
 /*
  Buffer types
@@ -125,15 +142,23 @@ namespace StencilAction
         Invert = GL_INVERT
     };
 }
+
+// forward declaration
 class Program;
 class Texture;
 class Framebuffer;
 class VertexArray;
+class Context;
+
+typedef std::shared_ptr<Context> SPContext;
+
+/*
+ OpenGL context
+ */
 class Context
 {
 public:
-    void activate();
-    void setVertifcalSync(bool enabled);
+//    void setVertifcalSync(bool enabled);
 
     void enable(Capability::capability_t capability);
     void disable(Capability::capability_t capability);
@@ -150,9 +175,9 @@ public:
     void stencilFunc(TestFunction::test_function_t function, int reference, unsigned int mask = ~0);
     void stencilOp(StencilAction::stencil_action_t fail, StencilAction::stencil_action_t zfail, StencilAction::stencil_action_t pass);
 
-    void useProgram( const Program& program);
+    void useProgram( const SPProgram& program);
 
-    void bindTexture(const Texture& texture, unsigned char unit);
+    void bindTexture(const SPTexture& texture, unsigned char unit);
 
     void bindFramebuffer( const Framebuffer& framebuffer);
     void bindFramebuffer();
@@ -163,19 +188,21 @@ public:
     void drawArrays(const VertexArray& vao, Primitive::primitive_t mode, unsigned int offset, unsigned int count);
     void drawElements(const VertexArray& vao, Primitive::primitive_t mode, intptr_t offset, unsigned int count, unsigned int type);
 
-//    float time();
+    /*
+     CPPGL always use a existing context.
 
-    long getCurrentMicroseconds();
-    void sleepMicroseconds(long microseconds);
-    static Context useExistingContext();
+     Please create the window and OpenGL context by your self,
+     and the context version >= 3.2, you can use GLFW to do it.
+     */
+    static SPContext Create();
 
     ~Context();
-
 private:
     Context();
-    Context(unsigned char color, unsigned char depth, unsigned char stencil, unsigned int antialias);
-    bool owned;
-    GLint defaultViewport[4];
+
+//    Context(unsigned char color, unsigned char depth, unsigned char stencil, unsigned int antialias);
+//    bool owned;
+    GLint _defaultViewport[4];
 };
 
 NS_CPPGL_END

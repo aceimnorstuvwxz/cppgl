@@ -1,10 +1,24 @@
-//
-//  cppgl.cpp
-//  lua2d_glfw
-//
-//  Created by chenbingfeng on 15/5/2.
-//  Copyright (c) 2015年 chenbingfeng. All rights reserved.
-//
+/*
+Copyright (c) 2015 chenbingfeng (iichenbf#gmail.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
 
 #include "cppgl.h"
 
@@ -87,12 +101,11 @@ static const char* fragmentSource =
 void cppgl_test()
 {
     makeContext();
-    auto context = Context::useExistingContext();
-    Shader vert(ShaderType::Vertex, vertexSource);
-    Shader freg(ShaderType::Fragment, fragmentSource);
-    Program program(vert, freg);
-
-    context.useProgram(program);
+    auto context = Context::Create();
+    SPShader vert = Shader::create(ShaderType::Vertex, vertexSource);
+    SPShader freg = Shader::create(ShaderType::Fragment, fragmentSource);
+    SPProgram program = Program::create(vert, freg);
+    context->useProgram(program);
 
     float vertices[] = {
         -0.5f, -0.5f, 0.0f, 0.0f,
@@ -102,29 +115,29 @@ void cppgl_test()
         0.5f, -0.5f, 1.0f, 0.0f,
         -0.5f, -0.5f, 0.0f, 0.0f
     };
-    Image image{"shooting_arrow.png"};
-    image.load();
-    Texture texture{image, InternalFormat::RGBA};
-    texture.setWrapping(Wrapping::Repeat, Wrapping::Repeat);
-    texture.setFilters(Filter::Linear, Filter::Linear);
+    auto image = Image::create("shooting_arrow.png");
+    image->load();
+    SPTexture texture = Texture::create(image, InternalFormat::RGBA);
+    texture->setWrapping(Wrapping::Repeat, Wrapping::Repeat);
+    texture->setFilters(Filter::Linear, Filter::Linear);
 
-    context.bindTexture(texture, 0);
-    VertexBuffer vbo(vertices, sizeof(vertices), BufferUsage::StaticDraw);
-    VertexArray vao;
-    vao.bindAttribute(program.getAttribute("position"), vbo, Type::Float, 2, 4*sizeof(float), NULL);
-    vao.bindAttribute(program.getAttribute("texcoord"), vbo, Type::Float, 2, 4*sizeof(float), 2*sizeof(float));
+    context->bindTexture(texture, 0);
+    SPVertexBuffer vbo = VertexBuffer::create(vertices, sizeof(vertices), BufferUsage::StaticDraw);
+    SPVertexArray vao = VertexArray::create();
+    vao->bindAttribute(program->getAttribute("position"), *vbo, Type::Float, 2, 4*sizeof(float), NULL);
+    vao->bindAttribute(program->getAttribute("texcoord"), *vbo, Type::Float, 2, 4*sizeof(float), 2*sizeof(float));
     std::chrono::microseconds frameInterval{(long long)(1.0f/60.0f * 1000.0f * 1000.0f)};
 
-    context.clearColor({0.5f, 0.0f, 0.0f, 1.0f});
+    context->clearColor({0.5f, 0.0f, 0.0f, 1.0f});
 
-    context.enable(Capability::Blend);
-    context.blendFunc(BlendFactor::SRC_ALPHA, BlendFactor::ONE_MINUS_SRC_ALPHA);
+    context->enable(Capability::Blend);
+    context->blendFunc(BlendFactor::SRC_ALPHA, BlendFactor::ONE_MINUS_SRC_ALPHA);
 
     while (!glfwWindowShouldClose(_glfwWindow))
     {
         auto last = std::chrono::steady_clock::now();
-        context.clear();
-        context.drawArrays(vao, Primitive::Triangles, 0, 6);
+        context->clear();
+        context->drawArrays(*vao, Primitive::Triangles, 0, 6);
         glfwSwapBuffers(_glfwWindow);
         glfwPollEvents();
 
