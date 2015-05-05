@@ -23,6 +23,7 @@
 #include "Image.h"
 #include "SOIL/SOIL.h"
 #include <iostream>
+#include "inter.h"
 
 NS_CPPGL_BEGIN
 
@@ -46,15 +47,15 @@ SPImage Image::create(const std::string &filename)
 void Image::load()
 {
     if (_loaded) {
-        LOG("image", _filename, "already been loaded");
+        CLOG("image", _filename, "already been loaded");
         return;
     } else {
         _data = SOIL_load_image(_filename.c_str(), &_width, &_height, 0, SOIL_LOAD_RGBA);
         if (_data == nullptr) {
-            LOG("image", _filename, "load filed:", SOIL_last_result());
+            CLOG("image", _filename, "load filed:", SOIL_last_result());
         } else {
             _loaded = true;
-            LOG("image", _filename, "loaded width", _width, "height", _height);
+            CLOG("image", _filename, "loaded width", _width, "height", _height);
         }
     }
 }

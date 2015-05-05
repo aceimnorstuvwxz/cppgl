@@ -21,6 +21,8 @@
  */
 
 #include "Program.h"
+#include "inter.h"
+
 #define COUNT_MAX 16
 
 NS_CPPGL_BEGIN
@@ -30,17 +32,17 @@ SPProgram Program::create()
     return SPProgram(new Program());
 }
 
-SPProgram Program::create(const SPShader& vertex)
+SPProgram Program::create(const SPShader vertex)
 {
     return SPProgram(new Program(vertex));
 }
 
-SPProgram Program::create(const SPShader &vertex, const SPShader &fragment)
+SPProgram Program::create(const SPShader vertex, const SPShader fragment)
 {
     return SPProgram(new Program(vertex, fragment));
 }
 
-SPProgram Program::create(const SPShader &vertex, const SPShader &fragment, const SPShader &geometry)
+SPProgram Program::create(const SPShader vertex, const SPShader fragment, const SPShader geometry)
 {
     return SPProgram(new Program(vertex, fragment, geometry));
 }
@@ -50,20 +52,20 @@ Program::Program()
     _obj = glCreateProgram();
 }
 
-Program::Program( const SPShader& vertex ):Program()
+Program::Program( const SPShader vertex ):Program()
 {
     attach(vertex);
     link();
 }
 
-Program::Program( const SPShader& vertex, const SPShader& fragment ):Program()
+Program::Program( const SPShader vertex, const SPShader fragment ):Program()
 {
     attach(vertex);
     attach(fragment);
     link();
 }
 
-Program::Program( const SPShader& vertex, const SPShader& fragment, const SPShader& geometry ):Program()
+Program::Program( const SPShader vertex, const SPShader fragment, const SPShader geometry ):Program()
 {
     attach(vertex);
     attach(fragment);
@@ -81,7 +83,7 @@ Program::operator GLuint() const
     return _obj;
 }
 
-void Program::attach( const SPShader& shader )
+void Program::attach( const SPShader shader )
 {
     glAttachShader( _obj, *shader );
 }
@@ -99,7 +101,7 @@ void Program::link()
     glGetProgramiv( _obj, GL_LINK_STATUS, &res );
 
     if (res != GL_TRUE) {
-        LOG("link failed, ", getInfoLog());
+        CLOG("link failed, ", getInfoLog());
         _linked = false;
     } else {
         _linked = true;

@@ -196,7 +196,7 @@ class Texture
 {
 public:
     static SPTexture create();
-    static SPTexture create(const SPImage& image, InternalFormat::internal_format_t format = InternalFormat::RGBA);
+    static SPTexture create(const SPImage image, InternalFormat::internal_format_t format = InternalFormat::RGBA);
 
     ~Texture();
 

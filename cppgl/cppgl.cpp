@@ -44,8 +44,8 @@ static GLFWwindow* _glfwWindow;
 void makeContext()
 {
     // using GLFW to generate window and GL context
-    int width = 800;
-    int height = 600;
+    int width = 142;
+    int height = 196;
 
     // init glfw window
     glfwSetErrorCallback(glfw_error_callback);
@@ -128,7 +128,7 @@ void cppgl_test()
     vao->bindAttribute(program->getAttribute("texcoord"), *vbo, Type::Float, 2, 4*sizeof(float), 2*sizeof(float));
     std::chrono::microseconds frameInterval{(long long)(1.0f/60.0f * 1000.0f * 1000.0f)};
 
-    context->clearColor({0.5f, 0.0f, 0.0f, 1.0f});
+    context->clearColor({1.0f, 1.0f, 1.0f, 1.0f});
 
     context->enable(Capability::Blend);
     context->blendFunc(BlendFactor::SRC_ALPHA, BlendFactor::ONE_MINUS_SRC_ALPHA);

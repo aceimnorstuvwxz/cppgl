@@ -37,15 +37,15 @@ class Program
 {
 public:
     static SPProgram create();
-    static SPProgram create(const SPShader& vertex);
-    static SPProgram create(const SPShader& vertex, const SPShader& fragment);
-    static SPProgram create(const SPShader& vertex, const SPShader& fragment, const SPShader& geometry);
+    static SPProgram create(const SPShader vertex);
+    static SPProgram create(const SPShader vertex, const SPShader fragment);
+    static SPProgram create(const SPShader vertex, const SPShader fragment, const SPShader geometry);
 
     ~Program();
 
     operator GLuint() const;
 
-    void attach( const SPShader& shader );
+    void attach( const SPShader shader );
     void transformFeedbackVaryings( const char** varyings, unsigned int count );
     void link();
     bool isLinked() const;
@@ -83,9 +83,9 @@ private:
     GLuint _obj;
 
     Program();
-    Program( const SPShader& vertex );
-    Program( const SPShader& vertex, const SPShader& fragment );
-    Program( const SPShader& vertex, const SPShader& fragment, const SPShader& geometry );
+    Program( const SPShader vertex );
+    Program( const SPShader vertex, const SPShader fragment );
+    Program( const SPShader vertex, const SPShader fragment, const SPShader geometry );
 
     bool _linked = false;
 };

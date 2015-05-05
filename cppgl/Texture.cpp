@@ -32,7 +32,7 @@ SPTexture Texture::create()
     return SPTexture(new Texture());
 }
 
-SPTexture Texture::create(const SPImage &image, InternalFormat::internal_format_t format)
+SPTexture Texture::create(const SPImage image, InternalFormat::internal_format_t format)
 {
     return SPTexture(new Texture(image, format));
 }
