@@ -12,6 +12,10 @@ LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 void EnableOpenGL(HWND hwnd, HDC*, HGLRC*);
 void DisableOpenGL(HWND, HDC, HGLRC);
 
+long clock(){
+	return 1L;
+}
+
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine,
@@ -36,7 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
     wcex.lpszMenuName = NULL;
-    wcex.lpszClassName = "GLSample";
+    wcex.lpszClassName = L"GLSample";
     wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 
@@ -45,8 +49,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
     // create main window
     hwnd = CreateWindowEx(0,
-                          "GLSample",
-                          "SOIL Sample",
+                          L"GLSample",
+                          L"SOIL Sample",
                           WS_OVERLAPPEDWINDOW,
                           CW_USEDEFAULT,
                           CW_USEDEFAULT,

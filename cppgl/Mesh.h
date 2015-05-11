@@ -20,56 +20,40 @@
  THE SOFTWARE.
  */
 
-#ifndef __lua2d_glfw__utils__
-#define __lua2d_glfw__utils__
+#ifndef __lua2d_glfw__Mesh__
+#define __lua2d_glfw__Mesh__
 
-#define NS_CPPGL_BEGIN namespace cppgl {
-#define NS_CPPGL_END   }
-
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#endif
-
-#ifdef _WIN32
-#include "glew/glew.h"
-#endif
-
-// use glm as math lib, which is a header only library
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-
-
+#include "utils.h"
+#include <memory>
+#include <string>
+#include <vector>
 
 NS_CPPGL_BEGIN
 
-namespace Type
+struct Vertex
 {
-    enum type_t
-    {
-        Byte = GL_BYTE,
-        UnsignedByte = GL_UNSIGNED_BYTE,
-        Short = GL_SHORT,
-        UnsignedShort = GL_UNSIGNED_SHORT,
-        Int = GL_INT,
-        UnsignedInt = GL_UNSIGNED_INT,
-        Float = GL_FLOAT,
-        Double = GL_DOUBLE
-    };
-}
+    glm::vec3 position;
+    glm::vec2 texcoord;
+    glm::vec3 normal;
+};
 
-typedef GLint Attribute;
-typedef GLint Uniform;
+class Mesh;
+typedef std::shared_ptr<Mesh> SPMesh;
 
-typedef unsigned int uint;
-typedef unsigned char uchar;
-
-typedef glm::vec4 Color;
-inline const float* color_ptr(const Color& color)
+class Mesh
 {
-    return glm::value_ptr(color);
-}
+public:
+    static SPMesh create(const std::string& objfilename);
+
+    const Vertex* vertices() const;
+    std::size_t vertexCount() const;
+
+private:
+    Mesh(const std::string& objfilename);
+
+    std::vector<Vertex> _vertices;
+};
 
 NS_CPPGL_END
 
-#endif /* defined(__lua2d_glfw__utils__) */
+#endif /* defined(__lua2d_glfw__Mesh__) */

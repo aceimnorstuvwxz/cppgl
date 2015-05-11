@@ -23,8 +23,6 @@
 #ifndef __lua2d_glfw__cppgl__
 #define __lua2d_glfw__cppgl__
 
-#include <stdio.h>
-
 #include "utils.h"
 
 #include "Image.h"
@@ -35,6 +33,7 @@
 #include "Texture.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
+#include "Mesh.h"
 
 NS_CPPGL_BEGIN
 

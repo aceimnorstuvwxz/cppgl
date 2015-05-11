@@ -28,3 +28,7 @@
 *.app
 
 cphere.sh
+.DS_Store
+cppgl/.DS_Store
+
+cppgl/SOIL/.DS_Store
